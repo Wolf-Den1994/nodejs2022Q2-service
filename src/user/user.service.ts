@@ -7,13 +7,18 @@ import { User } from './schemas/user.schemas';
 
 @Injectable()
 export class UserService {
+  data: string;
+  constructor() {
+    this.data = 'user';
+  }
+
   async getAll(): Promise<User[]> {
-    const data: User[] = await db.getAll('users');
+    const data: User[] = await db.getAll(this.data);
     return data;
   }
 
   async getById(id: string): Promise<User> {
-    const data: User = await db.getById('users', id);
+    const data: User = await db.getById(this.data, id);
     return data;
   }
 
@@ -25,26 +30,24 @@ export class UserService {
       version: 1,
       updatedAt: Date.now(),
     };
-    const data: User = await db.create('users', newUser);
+    const data: User = await db.create(this.data, newUser);
     return data;
   }
 
   async remove(id: string): Promise<User> {
-    const data = await db.remove('users', id);
+    const data = await db.remove(this.data, id);
     return data;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const oldData: User = await db.getById('users', id);
-    if (updateUserDto.oldPassowrd === oldData.password) {
-      const updateUser = {
-        ...oldData,
-        password: updateUserDto.newPassword,
-        version: oldData.version + 1,
-        updatedAt: Date.now(),
-      };
-      const data = await db.update('users', id, updateUser);
-      return data;
-    }
+    const oldData: User = await db.getById(this.data, id);
+    const updateUser = {
+      ...oldData,
+      password: updateUserDto.newPassword,
+      version: oldData.version + 1,
+      updatedAt: Date.now(),
+    };
+    const data = await db.update(this.data, id, updateUser);
+    return data;
   }
 }

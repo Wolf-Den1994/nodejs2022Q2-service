@@ -10,7 +10,7 @@ export interface IUser {
 }
 
 class InMemoryDB {
-  users: IUser[];
+  users: IUser[] = [];
 
   async getAll(type: string): Promise<IUser[]> {
     return new Promise((res) => {
@@ -21,7 +21,7 @@ class InMemoryDB {
   async getById(type: string, id: string): Promise<IUser> {
     return new Promise((res, rej) => {
       const findData = this[type]?.find((d: IUser) => d.id === id);
-      if (findData) rej(new NotFoundException());
+      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       res(findData);
     });
   }
@@ -36,7 +36,7 @@ class InMemoryDB {
   async remove(type: string, id: string): Promise<IUser> {
     return new Promise((res, rej) => {
       const findData = this[type]?.find((d: IUser) => d.id === id);
-      if (findData) rej(new NotFoundException());
+      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       this[type] = this[type]?.filter((d: IUser) => d.id !== id);
       res(findData);
     });
@@ -45,7 +45,7 @@ class InMemoryDB {
   async update(type: string, id: string, body: IUser): Promise<IUser> {
     return new Promise((res, rej) => {
       const findData = this[type]?.find((d: IUser) => d.id === id);
-      if (findData) rej(new NotFoundException());
+      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       this[type] = this[type]?.map((d: IUser) => (d.id === body.id ? body : d));
       res(body);
     });
