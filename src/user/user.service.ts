@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { v4 } from 'uuid';
 import db from 'src/db/InMemoryDB';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -41,6 +41,7 @@ export class UserService {
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const oldData: User = await db.getById(this.data, id);
+    if (oldData.password !== updateUserDto.oldPassowrd) throw new ForbiddenException('Ooops, passwords do not match!');
     const updateUser = {
       ...oldData,
       password: updateUserDto.newPassword,

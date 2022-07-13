@@ -37,11 +37,13 @@ export class UserController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string): Promise<User> {
     return this.userService.remove(id);
   }
 
   @Put(':id')
+  @HttpCode(HttpStatus.OK)
   update(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,

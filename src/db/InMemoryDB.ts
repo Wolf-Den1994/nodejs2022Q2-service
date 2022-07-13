@@ -1,4 +1,5 @@
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { uuidValidateV4 } from '../utils/common';
 
 export interface IUser {
   id: string; // uuid v4
@@ -10,7 +11,7 @@ export interface IUser {
 }
 
 class InMemoryDB {
-  users: IUser[] = [];
+  user: IUser[] = [];
 
   async getAll(type: string): Promise<IUser[]> {
     return new Promise((res) => {
@@ -20,6 +21,7 @@ class InMemoryDB {
 
   async getById(type: string, id: string): Promise<IUser> {
     return new Promise((res, rej) => {
+      if (!uuidValidateV4(id)) rej(new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`))
       const findData = this[type]?.find((d: IUser) => d.id === id);
       if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       res(findData);
@@ -35,6 +37,7 @@ class InMemoryDB {
 
   async remove(type: string, id: string): Promise<IUser> {
     return new Promise((res, rej) => {
+      if (!uuidValidateV4(id)) rej(new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`))
       const findData = this[type]?.find((d: IUser) => d.id === id);
       if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       this[type] = this[type]?.filter((d: IUser) => d.id !== id);
@@ -44,6 +47,7 @@ class InMemoryDB {
 
   async update(type: string, id: string, body: IUser): Promise<IUser> {
     return new Promise((res, rej) => {
+      if (!uuidValidateV4(id)) rej(new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`))
       const findData = this[type]?.find((d: IUser) => d.id === id);
       if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
       this[type] = this[type]?.map((d: IUser) => (d.id === body.id ? body : d));
