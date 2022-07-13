@@ -1,4 +1,11 @@
+import { IsString, IsNotEmpty } from 'class-validator';
+
 export class UpdateUserDto {
-  readonly title: string;
-  readonly price: number;
+  @IsString()
+  @IsNotEmpty()
+  oldPassowrd: string;
+
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
 }

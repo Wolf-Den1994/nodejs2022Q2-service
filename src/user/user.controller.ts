@@ -32,17 +32,20 @@ export class UserController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProductDto: CreateUserDto) {
-    return this.userService.create(createProductDto);
+  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+    return this.userService.create(createUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<User> {
     return this.userService.remove(id);
   }
 
   @Put(':id')
-  update(@Body() updateProductDto: UpdateUserDto, @Param('id') id: string) {
-    return this.userService.update(id, updateProductDto);
+  update(
+    @Body() updateUserDto: UpdateUserDto,
+    @Param('id') id: string,
+  ): Promise<User> {
+    return this.userService.update(id, updateUserDto);
   }
 }
