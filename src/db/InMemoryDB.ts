@@ -1,11 +1,12 @@
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { uuidValidateV4 } from '../utils/common';
-import { IUser, IArtist, IAlbum, IDB } from './dto/db.dto';
+import { IUser, IArtist, IAlbum, ITrack, IDB } from './dto/db.dto';
 
 class InMemoryDB {
   user: IUser[] = [];
   artist: IArtist[] = [];
   album: IAlbum[] = [];
+  track: ITrack[] = [];
 
   async getAll(type: string): Promise<IDB[]> {
     return new Promise((res) => {
