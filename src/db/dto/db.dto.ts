@@ -13,7 +13,14 @@ export interface IArtist {
   grammy: boolean;
 }
 
-export type IDB = IUser | IArtist;
+export interface IAlbum {
+  id: string; // uuid v4
+  name: string;
+  year: number;
+  artistId: string | null; // refers to Artist
+}
+
+export type IDB = IUser | IArtist | IAlbum;
 
 // export interface ITrack {
 //   id: string; // uuid v4
