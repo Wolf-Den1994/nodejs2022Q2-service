@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IArtist } from '../db/dto/db.dto';
+import { IAlbum, IArtist, IFavorites, ITrack } from '../db/dto/db.dto';
 import { v4 } from 'uuid';
 import db from '../db/InMemoryDB';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -34,6 +34,26 @@ export class ArtistService {
 
   async remove(id: string): Promise<Artist> {
     const data = (await db.remove(this.data, id)) as IArtist;
+    const tracks: ITrack[] = (await db.getAll('track')) as ITrack[];
+    const albums: IAlbum[] = (await db.getAll('album')) as IAlbum[];
+    const favorites: IFavorites = await db.getAllFavorites('favorites');
+    const favArtist: IArtist[] = favorites[`${this.data}s`];
+
+    tracks.forEach((track: ITrack) => {
+      if (track?.artistId === data.id)
+        db.update('track', track?.id, { ...track, artistId: null });
+    });
+
+    albums.forEach((album: IAlbum) => {
+      if (album?.artistId === data.id)
+        db.update('album', album?.id, { ...album, artistId: null });
+    });
+
+    // console.log(1111, favArtist);
+    const newFavArtist = favArtist.filter((artist) => artist?.id !== data.id);
+    // console.log(222, newFavArtist);
+    db.updateFav(this.data, newFavArtist);
+
     return data;
   }
 

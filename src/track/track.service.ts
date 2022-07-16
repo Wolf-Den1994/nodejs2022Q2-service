@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ITrack } from '../db/dto/db.dto';
+import { IFavorites, ITrack } from '../db/dto/db.dto';
 import { v4 } from 'uuid';
 import db from '../db/InMemoryDB';
 import { Track } from './schemas/track.schemas';
@@ -10,7 +10,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 export class TrackService {
   data: string;
   constructor() {
-    this.data = 'artist';
+    this.data = 'track';
   }
 
   async getAll(): Promise<Track[]> {
@@ -34,6 +34,12 @@ export class TrackService {
 
   async remove(id: string): Promise<Track> {
     const data = (await db.remove(this.data, id)) as ITrack;
+    const favorites: IFavorites = await db.getAllFavorites('favorites');
+    const favTrack: ITrack[] = favorites[`${this.data}s`];
+
+    const newFavTrack = favTrack.filter((track) => track?.id !== data.id);
+    db.updateFav(this.data, newFavTrack);
+
     return data;
   }
 

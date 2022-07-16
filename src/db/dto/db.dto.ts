@@ -1,10 +1,13 @@
-export interface IUser {
+export interface IUserWithoutPass {
   id: string; // uuid v4
   login: string;
-  password: string;
   version: number; // integer number, increments on update
   createdAt: number; // timestamp of creation
   updatedAt: number; // timestamp of last update
+}
+
+export interface IUser extends IUserWithoutPass {
+  password: string;
 }
 
 export interface IArtist {
@@ -26,6 +29,12 @@ export interface ITrack {
   artistId: string | null; // refers to Artist
   albumId: string | null; // refers to Album
   duration: number; // integer number
+}
+
+export interface IFavorites {
+  artists: IArtist[]; // favorite artists ids
+  albums: IAlbum[]; // favorite albums ids
+  tracks: ITrack[]; // favorite tracks ids
 }
 
 export type IDB = IUser | IArtist | IAlbum | ITrack;

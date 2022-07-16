@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { IAlbum } from '../db/dto/db.dto';
+import { IAlbum, IFavorites, ITrack } from '../db/dto/db.dto';
 import { v4 } from 'uuid';
 import db from '../db/InMemoryDB';
 import { Album } from './schemas/album.schemas';
@@ -34,6 +34,20 @@ export class AlbumService {
 
   async remove(id: string): Promise<Album> {
     const data = (await db.remove(this.data, id)) as IAlbum;
+    const tracks: ITrack[] = (await db.getAll('track')) as ITrack[];
+    const favorites: IFavorites = await db.getAllFavorites('favorites');
+    const favAlbum: IAlbum[] = favorites[`${this.data}s`];
+
+    tracks.forEach((track: ITrack) => {
+      if (track?.albumId === data.id)
+        db.update('track', track?.id, { ...track, albumId: null });
+    });
+
+    // console.log(1111, favArtist);
+    const newFavAlbum = favAlbum.filter((album) => album?.id !== data.id);
+    // console.log(222, newFavArtist);
+    db.updateFav(this.data, newFavAlbum);
+
     return data;
   }
 

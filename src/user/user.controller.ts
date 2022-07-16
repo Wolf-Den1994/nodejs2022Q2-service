@@ -9,9 +9,9 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
+import { IUserWithoutPass } from 'src/db/dto/db.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './schemas/user.schemas';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -20,25 +20,25 @@ export class UserController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  getAll(): Promise<User[]> {
+  getAll(): Promise<IUserWithoutPass[]> {
     return this.userService.getAll();
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getById(@Param('id') id: string): Promise<User> {
+  getById(@Param('id') id: string): Promise<IUserWithoutPass> {
     return this.userService.getById(id);
   }
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createUserDto: CreateUserDto): Promise<User> {
+  create(@Body() createUserDto: CreateUserDto): Promise<IUserWithoutPass> {
     return this.userService.create(createUserDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<User> {
+  remove(@Param('id') id: string): Promise<IUserWithoutPass> {
     return this.userService.remove(id);
   }
 
@@ -47,7 +47,7 @@ export class UserController {
   update(
     @Body() updateUserDto: UpdateUserDto,
     @Param('id') id: string,
-  ): Promise<User> {
+  ): Promise<IUserWithoutPass> {
     return this.userService.update(id, updateUserDto);
   }
 }
