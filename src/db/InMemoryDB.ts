@@ -74,7 +74,7 @@ class InMemoryDB {
     });
   }
 
-  async createFav(type: string, id: string): Promise<IDB> {
+  async createFav(type: string, id: string): Promise<void> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
         return rej(
@@ -86,11 +86,11 @@ class InMemoryDB {
           new UnprocessableEntityException(`Ooops, ${type} doesn't exist!`),
         );
       this.favorites[`${type}s`].push(findData);
-      return res(findData);
+      return res();
     });
   }
 
-  async removeFav(type: string, id: string): Promise<IDB> {
+  async removeFav(type: string, id: string): Promise<void> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
         return rej(

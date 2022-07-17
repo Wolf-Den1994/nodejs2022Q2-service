@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { IDB } from 'src/db/dto/db.dto';
 import db from '../db/InMemoryDB';
 import { Fav } from './schemas/favs.schemas';
 
@@ -15,12 +14,12 @@ export class FavsService {
     return data;
   }
 
-  async create(id: string, type: string): Promise<IDB> {
+  async create(id: string, type: string): Promise<void> {
     const data = await db.createFav(type, id);
     return data;
   }
 
-  async remove(id: string, type: string): Promise<IDB> {
+  async remove(id: string, type: string): Promise<void> {
     const data = await db.removeFav(type, id);
     return data;
   }

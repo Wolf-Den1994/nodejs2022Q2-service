@@ -4,8 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { dirname, join } from 'path';
 import { parse } from 'yaml';
-import 'dotenv/config';
 import { readFile } from 'fs/promises';
+import 'dotenv/config';
 
 const PORT = process.env.PORT || 4000;
 
