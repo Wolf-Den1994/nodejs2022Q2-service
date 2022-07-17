@@ -1,5 +1,9 @@
 # Home Library Service
 
+> Let's try to create a Home Library Service! `Users` can create, read, update, delete data about `Artists`, `Tracks` and `Albums`, add them to `Favorites` in their own Home Library!
+
+---
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -11,10 +15,22 @@
 git clone {repository URL}
 ```
 
+## Go to project root directory
+
+```
+cd nodejs2022Q2-service
+```
+
 ## Installing NPM modules
 
 ```
 npm install
+```
+
+## Change name file
+
+```
+.env.copy -> .env
 ```
 
 ## Running application
@@ -65,8 +81,29 @@ npm run lint
 npm run format
 ```
 
+---
+
 ### Debugging in VSCode
 
 Press <kbd>F5</kbd> to debug.
 
 For more information, visit: https://code.visualstudio.com/docs/editor/debugging
+
+---
+
+## Used technologies:
+- TypeScript
+- nestjs
+- swagger
+- class-validator
+- uuid
+- dotenv
+- jest
+- eslint
+- prettier
+- node.js version: 16 LTS
+
+---
+
+## Authors:
+ *[Denis Karazan](https://github.com/Wolf-Den1994)*

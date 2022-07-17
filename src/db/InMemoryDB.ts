@@ -93,9 +93,11 @@ class InMemoryDB {
         return rej(
           new UnprocessableEntityException(`Ooops, ${type} doesn't exist!`),
         );
-      if (!this.favorites[`${type}s`].some((d: IDB) => d.id === id)) {
-        this.favorites[`${type}s`].push(findData);
-      }
+      if (this.favorites[`${type}s`].some((d: IDB) => d.id === id))
+        return rej(
+          new BadRequestException('The passed identifier already exists!'),
+        );
+      this.favorites[`${type}s`].push(findData);
       const data = {
         statusCode: 201,
         message: 'Added successfully',

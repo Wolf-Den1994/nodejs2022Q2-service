@@ -15,7 +15,7 @@ export class UpdateAlbumDto {
   @IsNotEmpty()
   year: number;
 
-  @ValidateIf((_, value) => !(value === null)) // isNull - lodash
+  @ValidateIf((_, value) => !(value === null))
   @IsUUID('4')
   artistId: string | null;
 }
