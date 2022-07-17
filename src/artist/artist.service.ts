@@ -49,9 +49,7 @@ export class ArtistService {
         db.update('album', album?.id, { ...album, artistId: null });
     });
 
-    // console.log(1111, favArtist);
     const newFavArtist = favArtist.filter((artist) => artist?.id !== data.id);
-    // console.log(222, newFavArtist);
     db.updateFav(this.data, newFavArtist);
 
     return data;
