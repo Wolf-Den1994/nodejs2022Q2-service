@@ -38,3 +38,8 @@ export interface IFavorites {
 }
 
 export type IDB = IUser | IArtist | IAlbum | ITrack;
+
+export interface IFavSuccessful {
+  statusCode: number;
+  message: string;
+}

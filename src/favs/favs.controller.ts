@@ -7,6 +7,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
+import { IFavSuccessful } from 'src/db/dto/db.dto';
 import { FavsService } from './favs.service';
 import { Fav } from './schemas/favs.schemas';
 
@@ -22,7 +23,10 @@ export class FavsController {
 
   @Post(':type/:id')
   @HttpCode(HttpStatus.CREATED)
-  create(@Param('id') id: string, @Param('type') type: string): Promise<void> {
+  create(
+    @Param('id') id: string,
+    @Param('type') type: string,
+  ): Promise<IFavSuccessful> {
     return this.favsService.create(id, type);
   }
 

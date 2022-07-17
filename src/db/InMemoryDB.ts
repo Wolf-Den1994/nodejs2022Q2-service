@@ -4,7 +4,15 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { uuidValidateV4 } from '../utils/common';
-import { IUser, IArtist, IAlbum, ITrack, IFavorites, IDB } from './dto/db.dto';
+import {
+  IUser,
+  IArtist,
+  IAlbum,
+  ITrack,
+  IFavorites,
+  IDB,
+  IFavSuccessful,
+} from './dto/db.dto';
 
 class InMemoryDB {
   user: IUser[] = [];
@@ -74,7 +82,7 @@ class InMemoryDB {
     });
   }
 
-  async createFav(type: string, id: string): Promise<void> {
+  async createFav(type: string, id: string): Promise<IFavSuccessful> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
         return rej(
@@ -85,8 +93,14 @@ class InMemoryDB {
         return rej(
           new UnprocessableEntityException(`Ooops, ${type} doesn't exist!`),
         );
-      this.favorites[`${type}s`].push(findData);
-      return res();
+      if (!this.favorites[`${type}s`].some((d: IDB) => d.id === id)) {
+        this.favorites[`${type}s`].push(findData);
+      }
+      const data = {
+        statusCode: 201,
+        message: 'Added successfully',
+      };
+      return res(data);
     });
   }
 
