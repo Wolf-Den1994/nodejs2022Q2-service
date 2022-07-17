@@ -6,6 +6,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schemas/user.schemas';
 import { usePassword } from 'src/utils/common';
+import { InfoForUser } from 'src/utils/constants';
 
 @Injectable()
 export class UserService {
@@ -62,7 +63,7 @@ export class UserService {
   ): Promise<IUserWithoutPass> {
     const oldData: User = (await db.getById(this.data, id)) as IUser;
     if (oldData.password !== updateUserDto.oldPassword)
-      throw new ForbiddenException('Ooops, passwords do not match!');
+      throw new ForbiddenException(InfoForUser.OLD_PASSWORD_WRONG);
     const updateUser = {
       ...oldData,
       password: updateUserDto.newPassword,

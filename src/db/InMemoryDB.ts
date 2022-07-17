@@ -2,7 +2,9 @@ import {
   NotFoundException,
   BadRequestException,
   UnprocessableEntityException,
+  HttpStatus,
 } from '@nestjs/common';
+import { InfoForUser, notFound, favNotFound } from 'src/utils/constants';
 import { uuidValidateV4 } from '../utils/common';
 import {
   IUser,
@@ -34,11 +36,9 @@ class InMemoryDB {
   async getById(type: string, id: string): Promise<IDB> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
-        return rej(
-          new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`),
-        );
+        return rej(new BadRequestException(InfoForUser.BAD_REQUEST));
       const findData = this[type]?.find((d: IDB) => d.id === id);
-      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
+      if (!findData) rej(new NotFoundException(notFound(type)));
       return res(findData);
     });
   }
@@ -53,11 +53,9 @@ class InMemoryDB {
   async remove(type: string, id: string): Promise<IDB> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
-        return rej(
-          new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`),
-        );
+        return rej(new BadRequestException(InfoForUser.BAD_REQUEST));
       const findData = this[type]?.find((d: IDB) => d.id === id);
-      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
+      if (!findData) rej(new NotFoundException(notFound(type)));
       this[type] = this[type]?.filter((d: IDB) => d.id !== id);
       return res(findData);
     });
@@ -66,11 +64,9 @@ class InMemoryDB {
   async update(type: string, id: string, body: IDB): Promise<IDB> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
-        return rej(
-          new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`),
-        );
+        return rej(new BadRequestException(InfoForUser.BAD_REQUEST));
       const findData = this[type]?.find((d: IDB) => d.id === id);
-      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
+      if (!findData) rej(new NotFoundException(notFound(type)));
       this[type] = this[type]?.map((d: IDB) => (d.id === body.id ? body : d));
       return res(body);
     });
@@ -85,22 +81,16 @@ class InMemoryDB {
   async createFav(type: string, id: string): Promise<IFavSuccessful> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
-        return rej(
-          new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`),
-        );
+        return rej(new BadRequestException(InfoForUser.BAD_REQUEST));
       const findData = this[type]?.find((d: IDB) => d.id === id);
       if (!findData)
-        return rej(
-          new UnprocessableEntityException(`Ooops, ${type} doesn't exist!`),
-        );
+        return rej(new UnprocessableEntityException(favNotFound(type)));
       if (this.favorites[`${type}s`].some((d: IDB) => d.id === id))
-        return rej(
-          new BadRequestException('The passed identifier already exists!'),
-        );
+        return rej(new BadRequestException(InfoForUser.DUBLICATE_DATA));
       this.favorites[`${type}s`].push(findData);
       const data = {
-        statusCode: 201,
-        message: 'Added successfully',
+        statusCode: HttpStatus.CREATED,
+        message: InfoForUser.ADDED_SUCCESSFULY,
       };
       return res(data);
     });
@@ -109,13 +99,11 @@ class InMemoryDB {
   async removeFav(type: string, id: string): Promise<void> {
     return new Promise((res, rej) => {
       if (!uuidValidateV4(id))
-        return rej(
-          new BadRequestException(`Ooops, "${id}" is invalid (not uuid)!`),
-        );
+        return rej(new BadRequestException(InfoForUser.BAD_REQUEST));
       const findData = this.favorites[`${type}s`]?.find(
         (d: IDB) => d?.id === id,
       );
-      if (!findData) rej(new NotFoundException(`Ooops, ${type} not found!`));
+      if (!findData) rej(new NotFoundException(notFound(type)));
       this.favorites[`${type}s`] = this.favorites[`${type}s`]?.filter(
         (d: IDB) => d?.id !== id,
       );

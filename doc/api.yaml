@@ -145,7 +145,7 @@ paths:
   #               - login
   #     responses:
   #       200:
-  #         description: Successful login.
+  #         description: Successful login
   #         content:
   #           application/json:
   #             schema:
@@ -232,7 +232,7 @@ paths:
                 - password
       responses:
         201:
-          description: The user has been created.
+          description: The user has been created
           content:
             application/json:
               schema:
@@ -291,7 +291,7 @@ paths:
                 - newPassword
       responses:
         200:
-          description: The user has been updated.
+          description: The user has been updated
           content:
             application/json:
               schema:
@@ -326,7 +326,7 @@ paths:
       tags:
         - Users
       summary: Delete user
-      description: Deletes user by ID.
+      description: Deletes user by ID
       responses:
         204:
           description: The user has been deleted
@@ -415,7 +415,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Track was not found.
+          description: Track not found
     put:
       tags:
         - Track
@@ -449,7 +449,7 @@ paths:
                 - duration
       responses:
         200:
-          description: The track has been updated.
+          description: The track has been updated
           content:
             application/json:
               schema:
@@ -479,7 +479,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Track was not found.
+          description: Track not found
     delete:
       tags:
         - Track
@@ -493,7 +493,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Track was not found.
+          description: Track not found
   /album:
     get:
       tags:
@@ -571,7 +571,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Album was not found.
+          description: Album not found
     put:
       tags:
         - Album
@@ -598,7 +598,7 @@ paths:
                 - year
       responses:
         200:
-          description: The album has been updated.
+          description: The album has been updated
           content:
             application/json:
               schema:
@@ -608,7 +608,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Album was not found.
+          description: Album not found
     delete:
       tags:
         - Album
@@ -622,7 +622,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Album was not found.
+          description: Album not found
   /artist:
     get:
       tags:
@@ -695,7 +695,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Artist was not found.
+          description: Artist not found
     put:
       tags:
         - Artist
@@ -717,7 +717,7 @@ paths:
                 - grammy
       responses:
         200:
-          description: The artist has been updated.
+          description: The artist has been updated
           content:
             application/json:
               schema:
@@ -727,7 +727,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Artist was not found.
+          description: Artist not found
     delete:
       tags:
         - Artist
@@ -741,7 +741,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Artist was not found.
+          description: Artist not found
   /favs:
     get:
       tags:
@@ -778,7 +778,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         422:
-          description: Track with id doesn't exist.
+          description: Track with id doesn't exist
     delete:
       tags:
         - Favorites
@@ -792,7 +792,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Track was not found.
+          description: Track not found
   /favs/album/{id}:
     parameters:
       - name: id
@@ -814,7 +814,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         422:
-          description: Album with id doesn't exist.
+          description: Album with id doesn't exist
     delete:
       tags:
         - Favorites
@@ -828,7 +828,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Album was not found.
+          description: Album not found
   /favs/artist/{id}:
     parameters:
       - name: id
@@ -850,7 +850,7 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         422:
-          description: Artist with id doesn't exist.
+          description: Artist with id doesn't exist
     delete:
       tags:
         - Favorites
@@ -864,4 +864,4 @@ paths:
         # 401:
         #   $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Artist was not found.
+          description: Artist not found
