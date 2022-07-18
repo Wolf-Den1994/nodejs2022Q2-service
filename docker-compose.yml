@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  service:
+    build: nodejs2022Q2-service/
+    restart: always
+    ports:
+      - 4000:4000
+    environment:
+      - PORT=4000
