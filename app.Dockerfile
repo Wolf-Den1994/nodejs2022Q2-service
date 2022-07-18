@@ -1,10 +1,14 @@
-FROM node
+FROM node:lts-alpine
 
-WORKDIR /app
+RUN mkdir -p /opt/app
+
+WORKDIR /opt/app
 
 COPY package.json /app
 
 RUN npm install
+
+RUN npm prune --production
 
 COPY . .
 

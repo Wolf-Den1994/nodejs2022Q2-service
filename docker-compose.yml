@@ -1,10 +1,33 @@
 version: '3'
 
 services:
-  service:
-    build: nodejs2022Q2-service/
+  db:
+    build:
+      context: .
+      dockerfile: ./db.Dockerfile
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: ./app.Dockerfile
     restart: always
     ports:
       - 4000:4000
     environment:
-      - PORT=4000
+      PORT: 4000
+      DB_SCHEMA: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      DB_HOST: postgres
+    # depends_on:
+    #   - db
+
+volumes:
+  db:
