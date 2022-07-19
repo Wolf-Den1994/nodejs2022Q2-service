@@ -6,14 +6,10 @@ WORKDIR /opt/app
 
 RUN npm prune --production
 
-COPY package.json /app
+COPY . .
 
 RUN npm install
 
-COPY . .
+EXPOSE ${PORT}
 
-ENV PORT 4000
-
-EXPOSE $PORT
-
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start:dev"]
