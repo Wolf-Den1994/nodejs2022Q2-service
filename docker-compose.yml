@@ -4,20 +4,19 @@ services:
   db:
     build:
       context: .
-      dockerfile: ./db.Dockerfile
+      dockerfile: ./src/db/Dockerfile
+    ports:
+      - '5432:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
 
   app:
     build:
       context: .
-      dockerfile: ./app.Dockerfile
-    restart: always
+      dockerfile: ./Dockerfile
     ports:
       - 4000:4000
     environment:
@@ -28,6 +27,7 @@ services:
       DB_HOST: postgres
     # depends_on:
     #   - db
+    restart: always
 
 volumes:
   db:

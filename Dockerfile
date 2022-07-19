@@ -4,11 +4,11 @@ RUN mkdir -p /opt/app
 
 WORKDIR /opt/app
 
+RUN npm prune --production
+
 COPY package.json /app
 
 RUN npm install
-
-RUN npm prune --production
 
 COPY . .
 
