@@ -12,7 +12,7 @@
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone https://github.com/Wolf-Den1994/nodejs2022Q2-service
 ```
 
 ## Go to project root directory
@@ -36,12 +36,30 @@ npm install
 ## Running application
 
 ```
-npm start
+npm run docker
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+---
+
+## Docker scan
+
+For scan service
+
+```
+npm run docker:scan:app
+```
+
+For scan db
+
+```
+npm run docker:scan:db
+```
+
+---
 
 ## Testing
 
@@ -57,18 +75,6 @@ To run only one of all test suites
 
 ```
 npm run test -- <path to suite>
-```
-
-To run all test with authorization
-
-```
-npm run test:auth
-```
-
-To run only specific test suite with authorization
-
-```
-npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format
@@ -93,6 +99,7 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 
 ## Used technologies:
 - TypeScript
+- docker
 - nestjs
 - swagger
 - class-validator

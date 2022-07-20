@@ -36,5 +36,6 @@ services:
       - /var/lib/postgresql/data 
 
 networks:
-  default:
+  db:
     name: node_postgres_network
+    driver: bridge
