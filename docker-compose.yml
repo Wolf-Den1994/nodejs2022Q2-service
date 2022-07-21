@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
     restart: always
-    command: npm run start:dev
+    command: npm run start:dev     
     ports:
       - ${PORT}:${PORT}
     environment:
@@ -19,7 +19,6 @@ services:
       - db
     volumes:
       - ./:/opt/app/
-      - /opt/app/node_modules
 
   db:
     build:
@@ -36,6 +35,6 @@ services:
       - /var/lib/postgresql/data 
 
 networks:
-  db:
+  default:
     name: node_postgres_network
     driver: bridge

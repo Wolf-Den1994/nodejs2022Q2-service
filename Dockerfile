@@ -6,9 +6,13 @@ WORKDIR /opt/app
 
 RUN npm prune --production
 
+COPY prisma ./prisma/
+
 COPY . .
 
 RUN npm install
+
+RUN npx prisma generate
 
 EXPOSE ${PORT}
 
