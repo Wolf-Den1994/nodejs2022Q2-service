@@ -76,24 +76,31 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<IUserWithoutPass> {
-    const oldData = await this.prisma.user.findUnique({ where: { id } });
-    if (!oldData) throw new NotFoundException(notFound(this.data));
-    console.log('oldData.password', oldData, updateUserDto);
-    if (oldData.password !== updateUserDto.oldPassword)
-      throw new ForbiddenException(InfoForUser.OLD_PASSWORD_WRONG);
+    try {
+      // console.log('updateUserDto', id, updateUserDto);
+      const oldData = await this.prisma.user.findUnique({ where: { id } });
+      // console.log('oldData', oldData);
+      if (!oldData) throw new NotFoundException(notFound(this.data));
 
-    const data = await this.prisma.user.update({
-      where: { id },
-      data: {
-        ...oldData,
-        password: updateUserDto.newPassword,
-        version: oldData.version + 1,
-        updatedAt: Date.now(),
-      },
-    });
+      if (oldData.password !== updateUserDto.oldPassword)
+        throw new ForbiddenException(InfoForUser.OLD_PASSWORD_WRONG);
 
-    const { password, ...otherData } = data;
-    usePassword(password);
-    return otherData;
+      const data = await this.prisma.user.update({
+        where: { id },
+        data: {
+          ...oldData,
+          password: updateUserDto.newPassword,
+          version: oldData.version + 1,
+          updatedAt: Date.now(),
+        },
+      });
+      console.log('data', data);
+
+      const { password, ...otherData } = data;
+      usePassword(password);
+      return otherData;
+    } catch (error) {
+      throw new NotFoundException(notFound(this.data));
+    }
   }
 }

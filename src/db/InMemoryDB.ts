@@ -22,9 +22,9 @@ class InMemoryDB {
   album: IAlbum[] = [];
   track: ITrack[] = [];
   favorites: IFavorites = {
-    artists: [] as IArtist[],
-    albums: [] as IAlbum[],
-    tracks: [] as ITrack[],
+    artists: [] as string[],
+    albums: [] as string[],
+    tracks: [] as string[],
   };
 
   async getAll(type: string): Promise<IDB[]> {

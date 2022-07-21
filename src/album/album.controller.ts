@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -26,7 +27,9 @@ export class AlbumController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getById(@Param('id') id: string): Promise<Album> {
+  getById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album> {
     return this.albumService.getById(id);
   }
 
@@ -38,7 +41,9 @@ export class AlbumController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<Album> {
+  remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Album> {
     return this.albumService.remove(id);
   }
 
@@ -46,7 +51,7 @@ export class AlbumController {
   @HttpCode(HttpStatus.OK)
   update(
     @Body() updateAlbumDto: UpdateAlbumDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Album> {
     return this.albumService.update(id, updateAlbumDto);
   }

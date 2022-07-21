@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -26,7 +27,9 @@ export class ArtistController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getById(@Param('id') id: string): Promise<Artist> {
+  getById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Artist> {
     return this.artistService.getById(id);
   }
 
@@ -38,7 +41,9 @@ export class ArtistController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<Artist> {
+  remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Artist> {
     return this.artistService.remove(id);
   }
 
@@ -46,7 +51,7 @@ export class ArtistController {
   @HttpCode(HttpStatus.OK)
   update(
     @Body() updateArtistDto: UpdateArtistDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Artist> {
     return this.artistService.update(id, updateArtistDto);
   }

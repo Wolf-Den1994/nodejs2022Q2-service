@@ -1,55 +1,71 @@
-import { Injectable } from '@nestjs/common';
-import { IFavorites, ITrack } from '../db/dto/db.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 } from 'uuid';
-import db from '../db/InMemoryDB';
 import { Track } from './schemas/track.schemas';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { notFound } from 'src/utils/constants';
+import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class TrackService {
   data: string;
-  constructor() {
+  constructor(private prisma: PrismaService, private favs: FavsService) {
     this.data = 'track';
   }
 
   async getAll(): Promise<Track[]> {
-    const data: Track[] = (await db.getAll(this.data)) as ITrack[];
+    const data = await this.prisma.track.findMany();
     return data;
   }
 
   async getById(id: string): Promise<Track> {
-    const data: Track = (await db.getById(this.data, id)) as ITrack;
+    const data = await this.prisma.track.findUnique({ where: { id } });
+    if (!data) throw new NotFoundException(notFound(this.data));
     return data;
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
-    const newTrack = {
-      ...createTrackDto,
-      id: v4(),
-    };
-    const data: Track = (await db.create(this.data, newTrack)) as ITrack;
+    const data = await this.prisma.track.create({
+      data: { ...createTrackDto, id: v4() },
+    });
     return data;
   }
 
   async remove(id: string): Promise<Track> {
-    const data = (await db.remove(this.data, id)) as ITrack;
-    const favorites: IFavorites = await db.getAllFavorites('favorites');
-    const favTrack: ITrack[] = favorites[`${this.data}s`];
+    try {
+      const data = await this.prisma.track.delete({ where: { id } });
+      console.log('data', data);
 
-    const newFavTrack = favTrack.filter((track) => track?.id !== data.id);
-    db.updateFav(this.data, newFavTrack);
+      if (!data) throw new NotFoundException(notFound(this.data));
 
-    return data;
+      await this.prisma.track.updateMany({
+        where: { id },
+        data: { albumId: null },
+      });
+
+      await this.favs.remove(id, 'track');
+
+      return data;
+    } catch (error) {
+      throw new NotFoundException(notFound(this.data));
+    }
   }
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
-    const oldData: Track = (await db.getById(this.data, id)) as ITrack;
-    const updateTrack = {
-      ...oldData,
-      ...updateTrackDto,
-    };
-    const data = (await db.update(this.data, id, updateTrack)) as ITrack;
-    return data;
+    try {
+      const oldData = await this.prisma.track.findUnique({ where: { id } });
+
+      if (!oldData) throw new NotFoundException(notFound(this.data));
+
+      const data = await this.prisma.track.update({
+        where: { id },
+        data: { ...oldData, ...updateTrackDto },
+      });
+
+      return data;
+    } catch (error) {
+      throw new NotFoundException(notFound(this.data));
+    }
   }
 }

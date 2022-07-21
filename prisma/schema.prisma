@@ -12,19 +12,53 @@ datasource db {
 
 model User {
   id String @id @default(uuid())
+
+  version Int @default(autoincrement())
+
   createdAt Int
   updatedAt Int
 
-  version Int
   login String
   password String
+
+  @@map("users")
 }
 
-// model Album {
-//   id String @id
-//   name String
-//   year Int
-//   artistId String
+model Artist {
+  id String @id @default(uuid())
+  grammy Boolean @default(false)
+  name String
 
-//   // @@map("artists")
-// }
+  @@map("artists")
+}
+
+model Album {
+  id       String  @id @default(uuid())
+  name     String
+  year     Int
+
+  artistId String?
+
+  @@map("albums")
+}
+
+model Track {
+  id       String  @id @default(uuid())
+  name     String
+  duration Int
+
+  artistId String?
+  albumId  String?
+
+  @@map("tracks")
+}
+
+model Favorites {
+  id Int @id @default(0)
+
+  artists String[]
+  albums String[]
+  tracks String[]
+
+  @@map("favorites")
+}
