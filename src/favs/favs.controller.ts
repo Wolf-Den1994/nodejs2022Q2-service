@@ -7,7 +7,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { IFavSuccessful } from 'src/db/dto/db.dto';
+import { fields, IFavSuccessful } from 'src/db/dto/db.dto';
 import { FavsService } from './favs.service';
 import { Fav } from './schemas/favs.schemas';
 
@@ -25,14 +25,14 @@ export class FavsController {
   @HttpCode(HttpStatus.CREATED)
   create(
     @Param('id') id: string,
-    @Param('type') type: string,
+    @Param('type') type: fields,
   ): Promise<IFavSuccessful> {
     return this.favsService.create(id, type);
   }
 
   @Delete(':type/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string, @Param('type') type: string): Promise<void> {
+  remove(@Param('id') id: string, @Param('type') type: fields): Promise<void> {
     return this.favsService.remove(id, type);
   }
 }

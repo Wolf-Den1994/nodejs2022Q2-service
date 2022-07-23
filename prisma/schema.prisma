@@ -20,8 +20,6 @@ model User {
 
   login String
   password String
-
-  @@map("users")
 }
 
 model Artist {
@@ -29,7 +27,8 @@ model Artist {
   grammy Boolean @default(false)
   name String
 
-  @@map("artists")
+  Favorites Favorites? @relation(fields: [favoritesId], references: [id])
+  favoritesId Int?
 }
 
 model Album {
@@ -39,7 +38,8 @@ model Album {
 
   artistId String?
 
-  @@map("albums")
+  Favorites Favorites? @relation(fields: [favoritesId], references: [id])
+  favoritesId Int?
 }
 
 model Track {
@@ -50,15 +50,14 @@ model Track {
   artistId String?
   albumId  String?
 
-  @@map("tracks")
+  Favorites Favorites? @relation(fields: [favoritesId], references: [id])
+  favoritesId Int?
 }
 
 model Favorites {
   id Int @id @default(0)
 
-  artists String[]
-  albums String[]
-  tracks String[]
-
-  @@map("favorites")
+  artists Artist[]
+  albums Album[]
+  tracks Track[]
 }

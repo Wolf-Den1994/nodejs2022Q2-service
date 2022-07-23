@@ -35,18 +35,17 @@ export class AlbumService {
   async remove(id: string): Promise<Album> {
     try {
       const data = await this.prisma.album.delete({ where: { id } });
-
-      if (!data) throw new NotFoundException(notFound(this.data));
-
+      console.log('data', data);
       await this.prisma.track.updateMany({
         where: { id },
         data: { albumId: null },
       });
 
-      await this.favs.remove(id, 'album');
+      await this.favs.remove(id, 'albums');
 
       return data;
     } catch (error) {
+      console.log('error', error);
       throw new NotFoundException(notFound(this.data));
     }
   }

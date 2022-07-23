@@ -43,3 +43,5 @@ export interface IFavSuccessful {
   statusCode: number;
   message: string;
 }
+
+export type fields = 'artists' | 'albums' | 'tracks';

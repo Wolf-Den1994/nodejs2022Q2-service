@@ -37,14 +37,12 @@ export class TrackService {
       const data = await this.prisma.track.delete({ where: { id } });
       console.log('data', data);
 
-      if (!data) throw new NotFoundException(notFound(this.data));
-
       await this.prisma.track.updateMany({
         where: { id },
         data: { albumId: null },
       });
 
-      await this.favs.remove(id, 'track');
+      await this.favs.remove(id, 'tracks');
 
       return data;
     } catch (error) {

@@ -34,10 +34,9 @@ export class ArtistService {
 
   async remove(id: string): Promise<Artist> {
     try {
+      console.log('id', id);
       const data = await this.prisma.artist.delete({ where: { id } });
-
-      if (!data) throw new NotFoundException(notFound(this.data));
-
+      console.log('data', data);
       await this.prisma.track.updateMany({
         where: { id },
         data: { artistId: null },
@@ -47,7 +46,7 @@ export class ArtistService {
         data: { artistId: null },
       });
 
-      await this.favs.remove(id, 'artist');
+      await this.favs.remove(id, 'artists');
 
       return data;
     } catch (error) {
