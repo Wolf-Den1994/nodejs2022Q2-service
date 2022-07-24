@@ -7,7 +7,6 @@ import { IUserWithoutPass } from 'src/db/dto/db.dto';
 import { v4 } from 'uuid';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { usePassword } from 'src/utils/common';
 import { InfoForUser, notFound } from 'src/utils/constants';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -47,7 +46,7 @@ export class UserService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<any> {
-    const data = await this.prisma.user.create({
+    return await this.prisma.user.create({
       data: {
         ...createUserDto,
         createdAt: Date.now(),
@@ -55,10 +54,8 @@ export class UserService {
         id: v4(),
         version: 1,
       },
+      select: dataWithoutPass,
     });
-    const { password, ...otherData } = data;
-    usePassword(password);
-    return otherData;
   }
 
   async remove(id: string): Promise<IUserWithoutPass> {

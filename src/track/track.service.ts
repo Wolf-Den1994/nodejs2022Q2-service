@@ -4,7 +4,7 @@ import { Track } from './schemas/track.schemas';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { notFound } from 'src/utils/constants';
+import { dataTrack, notFound } from 'src/utils/constants';
 
 @Injectable()
 export class TrackService {
@@ -14,13 +14,14 @@ export class TrackService {
   }
 
   async getAll(): Promise<Track[]> {
-    return await this.prisma.track.findMany();
+    return await this.prisma.track.findMany({ select: dataTrack });
   }
 
   async getById(id: string): Promise<Track> {
     try {
       return await this.prisma.track.findUniqueOrThrow({
         where: { id },
+        select: dataTrack,
       });
     } catch {
       throw new NotFoundException(notFound(this.data));
@@ -30,12 +31,16 @@ export class TrackService {
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
     return await this.prisma.track.create({
       data: { ...createTrackDto, id: v4() },
+      select: dataTrack,
     });
   }
 
   async remove(id: string): Promise<Track> {
     try {
-      return await this.prisma.track.delete({ where: { id } });
+      return await this.prisma.track.delete({
+        where: { id },
+        select: dataTrack,
+      });
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
     }
@@ -46,6 +51,7 @@ export class TrackService {
       return await this.prisma.track.update({
         where: { id },
         data: { ...updateTrackDto },
+        select: dataTrack,
       });
     } catch (error) {
       throw new NotFoundException(notFound(this.data));

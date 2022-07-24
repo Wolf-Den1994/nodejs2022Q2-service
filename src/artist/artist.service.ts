@@ -4,7 +4,7 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './schemas/artist.schemas';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { notFound } from 'src/utils/constants';
+import { dataArtist, notFound } from 'src/utils/constants';
 
 @Injectable()
 export class ArtistService {
@@ -14,12 +14,15 @@ export class ArtistService {
   }
 
   async getAll(): Promise<Artist[]> {
-    return await this.prisma.artist.findMany();
+    return await this.prisma.artist.findMany({ select: dataArtist });
   }
 
   async getById(id: string): Promise<Artist> {
     try {
-      return await this.prisma.artist.findUniqueOrThrow({ where: { id } });
+      return await this.prisma.artist.findUniqueOrThrow({
+        where: { id },
+        select: dataArtist,
+      });
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
     }
@@ -33,7 +36,10 @@ export class ArtistService {
 
   async remove(id: string): Promise<Artist> {
     try {
-      const data = await this.prisma.artist.delete({ where: { id } });
+      const data = await this.prisma.artist.delete({
+        where: { id },
+        select: dataArtist,
+      });
 
       await this.prisma.track.updateMany({
         where: { artistId: id },
@@ -55,6 +61,7 @@ export class ArtistService {
       return await this.prisma.artist.update({
         where: { id },
         data: { ...updateArtistDto },
+        select: dataArtist,
       });
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
