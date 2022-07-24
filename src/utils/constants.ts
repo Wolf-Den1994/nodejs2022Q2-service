@@ -10,3 +10,27 @@ export const notFound = (type: string) =>
 
 export const favNotFound = (type: string) =>
   `${type[0].toUpperCase() + type.slice(1)} with id doesn't exist`;
+
+export const dataArtist = {
+  id: true,
+  name: true,
+  grammy: true,
+  favoritesId: false,
+};
+
+export const dataAlbum = {
+  id: true,
+  name: true,
+  year: true,
+  artistId: true,
+  favoritesId: false,
+};
+
+export const dataTrack = {
+  id: true,
+  name: true,
+  duration: true,
+  artistId: true,
+  albumId: true,
+  favoritesId: false,
+};

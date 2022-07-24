@@ -5,48 +5,44 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { Artist } from './schemas/artist.schemas';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { notFound } from 'src/utils/constants';
-import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class ArtistService {
   data: string;
-  constructor(private prisma: PrismaService, private favs: FavsService) {
+  constructor(private prisma: PrismaService) {
     this.data = 'artist';
   }
 
   async getAll(): Promise<Artist[]> {
-    const data = await this.prisma.artist.findMany();
-    return data;
+    return await this.prisma.artist.findMany();
   }
 
   async getById(id: string): Promise<Artist> {
-    const data = await this.prisma.artist.findUnique({ where: { id } });
-    if (!data) throw new NotFoundException(notFound(this.data));
-    return data;
+    try {
+      return await this.prisma.artist.findUniqueOrThrow({ where: { id } });
+    } catch (error) {
+      throw new NotFoundException(notFound(this.data));
+    }
   }
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
-    const data = await this.prisma.artist.create({
+    return await this.prisma.artist.create({
       data: { ...createArtistDto, id: v4() },
     });
-    return data;
   }
 
   async remove(id: string): Promise<Artist> {
     try {
-      console.log('id', id);
       const data = await this.prisma.artist.delete({ where: { id } });
-      console.log('data', data);
+
       await this.prisma.track.updateMany({
-        where: { id },
+        where: { artistId: id },
         data: { artistId: null },
       });
       await this.prisma.album.updateMany({
-        where: { id },
+        where: { artistId: id },
         data: { artistId: null },
       });
-
-      await this.favs.remove(id, 'artists');
 
       return data;
     } catch (error) {
@@ -56,16 +52,10 @@ export class ArtistService {
 
   async update(id: string, updateArtistDto: UpdateArtistDto): Promise<Artist> {
     try {
-      const oldData = await this.prisma.artist.findUnique({ where: { id } });
-
-      if (!oldData) throw new NotFoundException(notFound(this.data));
-
-      const data = await this.prisma.artist.update({
+      return await this.prisma.artist.update({
         where: { id },
-        data: { ...oldData, ...updateArtistDto },
+        data: { ...updateArtistDto },
       });
-
-      return data;
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
     }

@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { AlbumController } from './album.controller';
-import { FavsService } from 'src/favs/favs.service';
 
 @Module({
-  providers: [AlbumService, FavsService],
+  providers: [AlbumService],
   controllers: [AlbumController],
 })
 export class AlbumModule {}

@@ -7,52 +7,30 @@ import {
 import { fields, IFavSuccessful } from 'src/db/dto/db.dto';
 import { Fav } from './schemas/favs.schemas';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { favNotFound, InfoForUser, notFound } from 'src/utils/constants';
-
-const dataWithoutId = {
-  id: false,
-  artists: true,
-  albums: true,
-  tracks: true,
-};
-
-const dataArtist = {
-  id: true,
-  name: true,
-  grammy: true,
-  favoritesId: false,
-};
-
-const dataAlbum = {
-  id: true,
-  name: true,
-  year: true,
-  artistId: true,
-  favoritesId: false,
-};
-
-const dataTrack = {
-  id: true,
-  name: true,
-  duration: true,
-  artistId: true,
-  albumId: true,
-  favoritesId: false,
-};
+import {
+  dataAlbum,
+  dataArtist,
+  dataTrack,
+  favNotFound,
+  InfoForUser,
+  notFound,
+} from 'src/utils/constants';
 
 @Injectable()
 export class FavsService {
   data: string;
-  id = 0;
+  id: number;
 
   constructor(private prisma: PrismaService) {
     this.data = 'favorites';
-    this.initFavs();
+    this.id = 0;
   }
 
   async getAll(): Promise<Fav> {
+    await this.initFavs();
+
     return await this.prisma.favorites.findUnique({
-      where: { id: 0 },
+      where: { id: this.id },
       select: {
         artists: { select: dataArtist },
         albums: { select: dataAlbum },
@@ -62,12 +40,12 @@ export class FavsService {
   }
 
   async create(id: string, type: fields): Promise<IFavSuccessful> {
-    const customType = type.slice(0, -1);
-
     try {
-      await this.prisma[customType].update({
-        where: { id: 0 },
-        data: { favoritesId: 0 },
+      await this.initFavs();
+
+      await this.prisma[type].update({
+        where: { id },
+        data: { favoritesId: this.id },
       });
 
       const data = {
@@ -82,11 +60,11 @@ export class FavsService {
   }
 
   async remove(id: string, type: fields): Promise<void> {
-    const customType = type.slice(0, -1);
-
     try {
-      await this.prisma[customType].update({
-        where: { id: id },
+      await this.initFavs();
+
+      await this.prisma[type].update({
+        where: { id },
         data: { favoritesId: null },
       });
     } catch (err) {
@@ -97,29 +75,16 @@ export class FavsService {
   private async initFavs() {
     try {
       await this.prisma.favorites.findUniqueOrThrow({
-        where: { id: 0 },
+        where: { id: this.id },
       });
-    } catch {
-      await this.prisma.favorites.create({
-        data: { id: 0 },
-      });
+    } catch (error) {
+      try {
+        await this.prisma.favorites.create({
+          data: { id: this.id },
+        });
+      } catch (error) {
+        console.log('ERROR INITIAL FAVS:', error);
+      }
     }
   }
-
-  // private async getTypeById(id: string, type: fields) {
-  //   console.log('getTypeById', id, type);
-  //   const customType = type.slice(0, -1);
-  //   console.log('customType', customType);
-
-  //   try {
-  //     const data = await this.prisma[customType].findFirstOrThrow({
-  //       where: { id },
-  //     });
-  //     console.log('data', data);
-
-  //     return data;
-  //   } catch {
-  //     throw new UnprocessableEntityException(favNotFound(type));
-  //   }
-  // }
 }

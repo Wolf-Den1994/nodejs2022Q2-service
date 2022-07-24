@@ -5,46 +5,37 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { notFound } from 'src/utils/constants';
-import { FavsService } from 'src/favs/favs.service';
 
 @Injectable()
 export class TrackService {
   data: string;
-  constructor(private prisma: PrismaService, private favs: FavsService) {
+  constructor(private prisma: PrismaService) {
     this.data = 'track';
   }
 
   async getAll(): Promise<Track[]> {
-    const data = await this.prisma.track.findMany();
-    return data;
+    return await this.prisma.track.findMany();
   }
 
   async getById(id: string): Promise<Track> {
-    const data = await this.prisma.track.findUnique({ where: { id } });
-    if (!data) throw new NotFoundException(notFound(this.data));
-    return data;
+    try {
+      return await this.prisma.track.findUniqueOrThrow({
+        where: { id },
+      });
+    } catch {
+      throw new NotFoundException(notFound(this.data));
+    }
   }
 
   async create(createTrackDto: CreateTrackDto): Promise<Track> {
-    const data = await this.prisma.track.create({
+    return await this.prisma.track.create({
       data: { ...createTrackDto, id: v4() },
     });
-    return data;
   }
 
   async remove(id: string): Promise<Track> {
     try {
-      const data = await this.prisma.track.delete({ where: { id } });
-      console.log('data', data);
-
-      await this.prisma.track.updateMany({
-        where: { id },
-        data: { albumId: null },
-      });
-
-      await this.favs.remove(id, 'tracks');
-
-      return data;
+      return await this.prisma.track.delete({ where: { id } });
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
     }
@@ -52,16 +43,10 @@ export class TrackService {
 
   async update(id: string, updateTrackDto: UpdateTrackDto): Promise<Track> {
     try {
-      const oldData = await this.prisma.track.findUnique({ where: { id } });
-
-      if (!oldData) throw new NotFoundException(notFound(this.data));
-
-      const data = await this.prisma.track.update({
+      return await this.prisma.track.update({
         where: { id },
-        data: { ...oldData, ...updateTrackDto },
+        data: { ...updateTrackDto },
       });
-
-      return data;
     } catch (error) {
       throw new NotFoundException(notFound(this.data));
     }

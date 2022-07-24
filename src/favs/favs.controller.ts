@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { fields, IFavSuccessful } from 'src/db/dto/db.dto';
 import { FavsService } from './favs.service';
@@ -24,7 +25,7 @@ export class FavsController {
   @Post(':type/:id')
   @HttpCode(HttpStatus.CREATED)
   create(
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
     @Param('type') type: fields,
   ): Promise<IFavSuccessful> {
     return this.favsService.create(id, type);
@@ -32,7 +33,10 @@ export class FavsController {
 
   @Delete(':type/:id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string, @Param('type') type: fields): Promise<void> {
+  remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+    @Param('type') type: fields,
+  ): Promise<void> {
     return this.favsService.remove(id, type);
   }
 }

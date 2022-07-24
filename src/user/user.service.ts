@@ -56,7 +56,6 @@ export class UserService {
         version: 1,
       },
     });
-    console.log('USER data', data);
     const { password, ...otherData } = data;
     usePassword(password);
     return otherData;
@@ -77,9 +76,6 @@ export class UserService {
     id: string,
     updateUserDto: UpdateUserDto,
   ): Promise<IUserWithoutPass> {
-    // console.log('updateUserDto', id, updateUserDto);
-    // const oldData = await this.prisma.user.findUnique({ where: { id } });
-    // console.log('oldData', oldData);
     let oldData;
     try {
       oldData = await this.prisma.user.findUniqueOrThrow({
@@ -102,6 +98,7 @@ export class UserService {
         version: oldData.version + 1,
         updatedAt: Date.now(),
       },
+      select: dataWithoutPass,
     });
   }
 }
