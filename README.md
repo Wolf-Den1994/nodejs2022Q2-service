@@ -1,6 +1,8 @@
 # Home Library Service
 
-> Let's try to create a Home Library Service! `Users` can create, read, update, delete data about `Artists`, `Tracks` and `Albums`, add them to `Favorites` in their own Home Library!
+> Home Library Service! `Users` can create, read, update, delete data about `Artists`, `Tracks` and `Albums`, add them to `Favorites` in their own Home Library!
+
+> Implemented PostgreSQL database as source of data for your application and Prisma to communicate with your database.
 
 ---
 
@@ -37,6 +39,16 @@ npm install
 
 ```
 npm run docker
+```
+
+## Generating the client
+```
+npm run prisma:generate
+```
+
+## Prisma Migrate
+```
+npm run prisma:migrate
 ```
 
 After starting the app on port (4000 as default) you can open
