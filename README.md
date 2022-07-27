@@ -41,6 +41,8 @@ npm install
 npm run docker
 ```
 
+## Open new tab terminal
+
 ## Generating the client
 ```
 npm run prisma:generate

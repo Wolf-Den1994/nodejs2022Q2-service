@@ -1,19 +1,19 @@
 FROM node:lts-alpine
 
+WORKDIR /usr/src/app
+
 RUN mkdir -p /opt/app
 
-WORKDIR /opt/app
-
-RUN npm prune --production
+COPY package*.json ./
 
 COPY prisma ./prisma/
 
-COPY . .
-
 RUN npm install
 
-RUN npx prisma generate
+COPY . .
 
 EXPOSE ${PORT}
+
+RUN npx prisma generate
 
 CMD ["npm", "run", "start:dev"]
