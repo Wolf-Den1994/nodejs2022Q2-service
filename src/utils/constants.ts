@@ -15,7 +15,6 @@ export const dataArtist = {
   id: true,
   name: true,
   grammy: true,
-  favoritesId: false,
 };
 
 export const dataAlbum = {
@@ -23,7 +22,6 @@ export const dataAlbum = {
   name: true,
   year: true,
   artistId: true,
-  favoritesId: false,
 };
 
 export const dataTrack = {
@@ -32,5 +30,4 @@ export const dataTrack = {
   duration: true,
   artistId: true,
   albumId: true,
-  favoritesId: false,
 };
