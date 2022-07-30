@@ -15,7 +15,7 @@ model Auth {
   id        String @id @default(uuid())
   createdAt Int
   updatedAt Int
-  email     String @unique
+  login     String @unique
   hash      String
   hashedRt  String?
 }

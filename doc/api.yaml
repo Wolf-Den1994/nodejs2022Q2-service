@@ -134,7 +134,7 @@ paths:
               type: object
               title: example
               properties:
-                email:
+                login:
                   type: string
                   minLength: 3
                   maxLength: 255
@@ -145,7 +145,7 @@ paths:
                   pattern: ^[a-zA-Z0-9]{3,30}
                   description: Password
               required:
-                - email
+                - login
                 - password
       responses:
         204:
@@ -169,14 +169,14 @@ paths:
               type: object
               title: example
               properties:
-                email:
+                login:
                   type: string
-                  description: Email
+                  description: Login
                 password:
                   type: string
                   description: Password
               required:
-                - email
+                - password
                 - login
       responses:
         200:
