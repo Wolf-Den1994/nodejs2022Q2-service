@@ -6,6 +6,7 @@ export enum InfoForUser {
   ACCESS_DENIED = 'Access Denied',
   CREDENTIALS_INCORRECT = 'Credentials incorrect',
   REFRESH_TOKEN_MALFORMED = 'Refresh token malformed',
+  JWT_REFRESH = 'Jwt must be provided',
 }
 
 export enum Env {

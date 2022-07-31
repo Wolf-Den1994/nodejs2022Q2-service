@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { GetCurrentUser, GetCurrentUserId, Public } from 'src/utils/decorators';
+import { Public } from 'src/utils/decorators';
 import { RtGuard } from 'src/utils/guards';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
@@ -34,10 +34,7 @@ export class AuthController {
   @UseGuards(RtGuard)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
-  refreshTokens(
-    @GetCurrentUserId() userId: string,
-    @GetCurrentUser('refreshToken') refreshToken: string,
-  ) {
-    return this.authService.refreshTokens(userId, refreshToken);
+  async refreshTokens(@Body() { refreshToken }): Promise<Tokens> {
+    return this.authService.getRefreshTokens(refreshToken);
   }
 }

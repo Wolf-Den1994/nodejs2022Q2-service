@@ -1,13 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
-import { AuthDto } from './dto';
 import { v4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
-import { Tokens, JwtPayload } from './types';
 import { JwtService } from '@nestjs/jwt';
+import { AuthDto } from './dto';
 import { Env, InfoForUser } from 'src/utils/constants';
+import { Tokens, JwtPayload } from './types';
 
 @Injectable()
 export class AuthService {
@@ -43,9 +47,7 @@ export class AuthService {
   }
 
   async login(dto: AuthDto): Promise<Tokens> {
-    const user = await this.prisma.auth.findUnique({
-      where: { login: dto.login },
-    });
+    const user = await this.findOneByLogin(dto.login);
 
     if (!user) throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
 
@@ -59,9 +61,7 @@ export class AuthService {
   }
 
   async refreshTokens(userId: string, rt: string) {
-    const user = await this.prisma.auth.findUnique({
-      where: { id: userId },
-    });
+    const user = await this.findOneById(userId);
 
     if (!user || !user.hashedRt)
       throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
@@ -74,11 +74,17 @@ export class AuthService {
     return tokens;
   }
 
+  async getRefreshTokens(rt: string) {
+    if (!rt) throw new UnauthorizedException(InfoForUser.JWT_REFRESH);
+    const userId = await this.getCurrentUserId(rt);
+    return this.refreshTokens(userId, rt);
+  }
+
   private async hashData(data: string) {
     return await bcrypt.hash(data, +process.env.CRYPT_SALT);
   }
 
-  private async getTokens(userId: string, login: string): Promise<Tokens> {
+  async getTokens(userId: string, login: string): Promise<Tokens> {
     const jwtPayload: JwtPayload = { sub: userId, login };
 
     const [access_token, refresh_token] = await Promise.all([
@@ -102,5 +108,21 @@ export class AuthService {
       where: { id: userId },
       data: { hashedRt: hash },
     });
+  }
+
+  async findOneById(userId: string) {
+    return await this.prisma.auth.findUnique({ where: { id: userId } });
+  }
+
+  async findOneByLogin(login: string) {
+    return await this.prisma.auth.findUnique({ where: { login } });
+  }
+
+  async getCurrentUserId(context: string) {
+    const reqeust = await this.jwtService.verifyAsync(context, {
+      secret: this.config.get<string>(Env.JWT_SECRET_REFRESH_KEY),
+    });
+
+    return reqeust['sub'];
   }
 }
