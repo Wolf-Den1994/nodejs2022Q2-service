@@ -38,7 +38,7 @@ export class AuthService {
       });
 
     const tokens = await this.getTokens(newUser.id, newUser.login);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
+    await this.updateRtHash(newUser.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -54,7 +54,7 @@ export class AuthService {
       throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
 
     const tokens = await this.getTokens(user.id, user.login);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -70,7 +70,7 @@ export class AuthService {
     if (!rtMatches) throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
 
     const tokens = await this.getTokens(user.id, user.login);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRtHash(user.id, tokens.refreshToken);
     return tokens;
   }
 
@@ -92,7 +92,7 @@ export class AuthService {
       }),
     ]);
 
-    return { access_token, refresh_token };
+    return { accessToken: access_token, refreshToken: refresh_token };
   }
 
   async updateRtHash(userId: string, rt: string) {
