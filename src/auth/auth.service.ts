@@ -84,9 +84,9 @@ export class AuthService {
   }
 
   async getTokens(userId: string, login: string): Promise<Tokens> {
-    const jwtPayload: JwtPayload = { sub: userId, login };
+    const jwtPayload: JwtPayload = { userId, login };
 
-    const [access_token, refresh_token] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(jwtPayload, {
         secret: this.config.get<string>(Env.JWT_SECRET_KEY),
         expiresIn: this.config.get<string>(Env.TOKEN_EXPIRE_TIME),
@@ -97,7 +97,7 @@ export class AuthService {
       }),
     ]);
 
-    return { accessToken: access_token, refreshToken: refresh_token };
+    return { accessToken, refreshToken };
   }
 
   async updateRtHash(userId: string, rt: string) {
@@ -122,6 +122,6 @@ export class AuthService {
       secret: this.config.get<string>(Env.JWT_SECRET_REFRESH_KEY),
     });
 
-    return reqeust['sub'];
+    return reqeust['userId'];
   }
 }
