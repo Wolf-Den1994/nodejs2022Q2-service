@@ -75,9 +75,15 @@ export class AuthService {
   }
 
   async getRefreshTokens(rt: string) {
-    if (!rt) throw new UnauthorizedException(InfoForUser.JWT_REFRESH);
-    const userId = await this.getCurrentUserId(rt);
-    return this.refreshTokens(userId, rt);
+    try {
+      const userId = await this.getCurrentUserId(rt);
+      return this.refreshTokens(userId, rt);
+    } catch (error) {
+      if (error.message === 'invalid signature') {
+        throw new ForbiddenException(error.message);
+      }
+      throw new UnauthorizedException(error.message);
+    }
   }
 
   private async hashData(data: string) {
