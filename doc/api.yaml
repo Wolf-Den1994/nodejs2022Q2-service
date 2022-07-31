@@ -119,13 +119,13 @@ security:
   - bearerAuth: []
 
 paths:
-  /signup:
+  /auth/signup:
     post:
       tags:
         - Auth
       security: [ ]
       summary: Signup
-      description: Signup a user
+      description: Signup a user and returns a JWT-token
       requestBody:
         required: true
         content:
@@ -148,13 +148,23 @@ paths:
                 - login
                 - password
       responses:
-        204:
+        201:
           description: Successful signup
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                description: JWT Token
         400:
           description: Bad request
-        409:
-          description: Conflict. Login already exists
-  /login:
+        # 409:
+        #   description: Conflict. Login already exists
+  /auth/login:
     post:
       tags:
         - Auth
@@ -186,11 +196,53 @@ paths:
               schema:
                 type: object
                 properties:
-                  token:
+                  accessToken:
+                    type: string
+                  refreshToken:
                     type: string
                 description: JWT Token
+        400:
+          description: Bad request. body does not contain required fields
         403:
-          description: Incorrect login or password
+          description: Access Denied
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      security: []
+      summary: Refresh
+      description: Refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                refreshToken:
+                  type: string
+                  description: The refreshToken
+              required:
+                - refreshToken
+                - password
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                description: JWT Token
+        401:
+          description: Bad request. body does not contain required fields or refreshToken is invalid
+        403:
+          description: Access Denied
   /user:
     get:
       tags:
