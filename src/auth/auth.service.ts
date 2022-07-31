@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { v4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -24,22 +23,16 @@ export class AuthService {
   async singup(dto: AuthDto): Promise<Tokens> {
     const hash = await this.hashData(dto.password);
 
-    const newUser = await this.prisma.auth
-      .create({
-        data: {
-          id: v4(),
-          login: dto.login,
-          hash,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        },
-      })
-      .catch((error) => {
-        if (error instanceof PrismaClientKnownRequestError) {
-          throw new ForbiddenException(InfoForUser.CREDENTIALS_INCORRECT);
-        }
-        throw error;
-      });
+    const newUser = await this.prisma.user.create({
+      data: {
+        id: v4(),
+        login: dto.login,
+        password: hash,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        version: 1,
+      },
+    });
 
     const tokens = await this.getTokens(newUser.id, newUser.login);
     await this.updateRtHash(newUser.id, tokens.refreshToken);
@@ -51,7 +44,7 @@ export class AuthService {
 
     if (!user) throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
 
-    const passwordMatches = await bcrypt.compare(dto.password, user.hash);
+    const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches)
       throw new ForbiddenException(InfoForUser.ACCESS_DENIED);
 
@@ -110,18 +103,18 @@ export class AuthService {
   async updateRtHash(userId: string, rt: string) {
     const hash = await this.hashData(rt);
 
-    await this.prisma.auth.update({
+    await this.prisma.user.update({
       where: { id: userId },
       data: { hashedRt: hash },
     });
   }
 
   async findOneById(userId: string) {
-    return await this.prisma.auth.findUnique({ where: { id: userId } });
+    return await this.prisma.user.findUnique({ where: { id: userId } });
   }
 
   async findOneByLogin(login: string) {
-    return await this.prisma.auth.findUnique({ where: { login } });
+    return await this.prisma.user.findFirst({ where: { login } });
   }
 
   async getCurrentUserId(context: string) {
