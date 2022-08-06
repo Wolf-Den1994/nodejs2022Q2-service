@@ -4,6 +4,10 @@
 
 > Implemented PostgreSQL database as source of data for your application and Prisma to communicate with your database.
 
+> Implement Authentication and Authorization with JWT (Access and Refresh tokens).
+
+> Implement logging functionality to the already existing REST service. All logs write to `src/logs` folder.
+
 ---
 
 ## Prerequisites
