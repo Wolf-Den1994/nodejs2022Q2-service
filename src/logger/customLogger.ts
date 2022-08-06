@@ -49,7 +49,7 @@ export class CustomLogger extends ConsoleLogger {
     await this.logsService.createLog({
       message,
       context,
-      level: 'error',
+      level: 'warn',
     });
   }
 
@@ -59,17 +59,17 @@ export class CustomLogger extends ConsoleLogger {
     await this.logsService.createLog({
       message,
       context,
-      level: 'error',
+      level: 'debug',
     });
   }
 
   async verbose(message: string, context?: string) {
-    super.debug.apply(this, [message, context]);
+    super.verbose.apply(this, [message, context]);
 
     await this.logsService.createLog({
       message,
       context,
-      level: 'error',
+      level: 'verbose',
     });
   }
 }

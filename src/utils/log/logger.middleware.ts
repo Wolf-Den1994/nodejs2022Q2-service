@@ -1,9 +1,18 @@
 import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { LogLevel } from '@nestjs/common/services/logger.service';
 import { Request, Response, NextFunction } from 'express';
+import { getLogLevelsMiddleware } from './getLogLevelsMiddleware';
 
 @Injectable()
 export class LoggerMiddleware implements NestMiddleware {
   private logger = new Logger('HTTP');
+  private level: LogLevel[];
+
+  constructor(configService: ConfigService) {
+    const levelEnv = configService.get('LOGGER_LEVEL');
+    this.level = getLogLevelsMiddleware(levelEnv);
+  }
 
   use(request: Request, response: Response, next: NextFunction): void {
     const { ip, method, originalUrl, query, body } = request;
@@ -19,15 +28,29 @@ export class LoggerMiddleware implements NestMiddleware {
         body,
       )} StatusCode: ${statusCode} StatusMessage: ${statusMessage} ContentLength: ${contentLength} - ${userAgent} ${ip}`;
 
-      if (statusCode >= 500) {
+      if (this.level.includes('error') && statusCode >= 500) {
         return this.logger.error(message);
       }
 
-      if (statusCode >= 400) {
+      if (
+        this.level.includes('warn') &&
+        statusCode >= 400 &&
+        statusCode < 500
+      ) {
         return this.logger.warn(message);
       }
 
-      this.logger.log(message);
+      if (this.level.includes('log') && statusCode < 400) {
+        return this.logger.log(message);
+      }
+
+      if (this.level.includes('verbose') && statusCode < 400) {
+        return this.logger.log(message);
+      }
+
+      if (this.level.includes('debug') && statusCode < 400) {
+        return this.logger.log(message);
+      }
     });
 
     next();
