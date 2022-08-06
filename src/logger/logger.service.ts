@@ -1,6 +1,7 @@
 import { Injectable, LogLevel } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs/promises';
+import { EOL } from 'os';
 import { checkStart, getLogLevelsMiddleware } from 'src/utils/log';
 
 @Injectable()
@@ -16,7 +17,7 @@ export class LogsService {
     if (!this.level.includes(log.level)) return;
     const logString = `[NEST] ${new Date().toUTCString()} [Level: ${
       log.level
-    }] Context: ${log.context} Message: ${log.message}\n`;
+    }] Context: ${log.context} Message: ${log.message}${EOL}`;
     const size = +process.env.MAX_LOGGER_FILE;
 
     try {
