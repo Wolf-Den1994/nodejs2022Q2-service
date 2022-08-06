@@ -4,6 +4,7 @@ export const checkStart = (context) => {
     'RouterExplorer',
     'RoutesResolver',
     'InstanceLoader',
+    'NestFactory',
   ];
   return pass.includes(context);
 };

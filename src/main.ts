@@ -48,7 +48,5 @@ async function bootstrap() {
     );
     process.exit(1);
   });
-
-  const result = JSON.parse('A string');
 }
 bootstrap();

@@ -38,15 +38,15 @@ export class LogsService {
   }
 
   async createFile(logString, lastFileSize, size, currentFile) {
-    if (lastFileSize < size) {
+    if (lastFileSize >= size - 1000) {
       try {
-        await fs.appendFile(`src/logs/${currentFile}`, logString);
+        await fs.writeFile(`src/logs/nest_${Date.now()}.log`, logString);
       } catch (error) {
         console.error(error);
       }
     } else {
       try {
-        await fs.writeFile(`src/logs/nest_${Date.now()}.log`, logString);
+        await fs.appendFile(`src/logs/${currentFile}`, logString);
       } catch (error) {
         console.error(error);
       }
