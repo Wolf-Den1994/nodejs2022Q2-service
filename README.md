@@ -4,6 +4,8 @@
 
 > Implemented PostgreSQL database as source of data for your application and Prisma to communicate with your database.
 
+> Implement Authentication and Authorization with JWT (Access and Refresh tokens)
+
 ---
 
 ## Prerequisites
