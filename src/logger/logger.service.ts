@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import * as fsp from 'fs/promises';
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import { checkStart } from 'src/utils/log';
 
 @Injectable()
@@ -13,16 +12,17 @@ export class LogsService {
 
     try {
       if (checkStart(log.context)) return;
-      const files = await fsp.readdir('src/logs');
+      const files = await fs.readdir('src/logs');
       const currentFile = files[files.length - 1];
       if (!currentFile) {
         await this.createFile(logString, 0, size, `nest_${Date.now()}.log`);
       } else {
-        const lastFileSize = fs.statSync(`src/logs/${currentFile}`).size;
+        const lastFileStat = await fs.stat(`src/logs/${currentFile}`);
+        const lastFileSize = lastFileStat.size;
         await this.createFile(logString, lastFileSize, size, currentFile);
       }
     } catch (error) {
-      await fsp.mkdir('src/logs');
+      await fs.mkdir('src/logs');
       await this.createFile(logString, 0, size, `nest_${Date.now()}.log`);
     }
   }
@@ -30,13 +30,13 @@ export class LogsService {
   async createFile(logString, lastFileSize, size, currentFile) {
     if (lastFileSize < size) {
       try {
-        await fsp.appendFile(`src/logs/${currentFile}`, logString);
+        await fs.appendFile(`src/logs/${currentFile}`, logString);
       } catch (error) {
         console.error(error);
       }
     } else {
       try {
-        await fsp.writeFile(`src/logs/nest_${Date.now()}.log`, logString);
+        await fs.writeFile(`src/logs/nest_${Date.now()}.log`, logString);
       } catch (error) {
         console.error(error);
       }
