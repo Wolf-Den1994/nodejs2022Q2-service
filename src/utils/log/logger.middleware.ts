@@ -15,7 +15,7 @@ export class LoggerMiddleware implements NestMiddleware {
   }
 
   use(request: Request, response: Response, next: NextFunction): void {
-    const { ip, method, originalUrl, query, body } = request;
+    const { body, query, ip, method, originalUrl } = request;
     const userAgent = request.get('user-agent') || '';
 
     response.on('finish', () => {

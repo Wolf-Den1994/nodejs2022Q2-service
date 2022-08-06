@@ -14,9 +14,9 @@ export class LogsService {
 
   async createLog(log) {
     if (!this.level.includes(log.level)) return;
-    const logString = `[NEST] ${new Date()} [Level: ${log.level}] Context: ${
-      log.context
-    } Message: ${log.message}\n`;
+    const logString = `[NEST] ${new Date().toUTCString()} [Level: ${
+      log.level
+    }] Context: ${log.context} Message: ${log.message}\n`;
     const size = +process.env.MAX_LOGGER_FILE;
 
     try {

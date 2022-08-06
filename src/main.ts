@@ -33,5 +33,22 @@ async function bootstrap() {
   await app.listen(PORT);
 
   logger.log(`Server running on port ${PORT}`);
+
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error(
+      `${new Date().toUTCString()} Unhandled Rejection at Promise reason: ${reason} promise: ${promise}`,
+    );
+  });
+
+  process.on('uncaughtException', (err) => {
+    logger.error(
+      `${new Date().toUTCString()} Uncaught Exception thrown ${
+        err.message
+      } stack: ${err.stack}`,
+    );
+    process.exit(1);
+  });
+
+  const result = JSON.parse('A string');
 }
 bootstrap();
