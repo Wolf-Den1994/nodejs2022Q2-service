@@ -4,6 +4,8 @@
 
 > Implemented PostgreSQL database as source of data for your application and Prisma to communicate with your database.
 
+> Implement Authentication and Authorization with JWT (Access and Refresh tokens)
+
 ---
 
 ## Prerequisites
@@ -67,16 +69,16 @@ npm run docker:scan:db
 
 After application running open new terminal and enter:
 
-To run all tests without authorization
+To run all test with authorization
 
 ```
-npm run test
+npm run test:auth
 ```
 
-To run only one of all test suites
+To run only specific test suite with authorization
 
 ```
-npm run test -- <path to suite>
+npm run test:auth -- <path to suite>
 ```
 
 ### Auto-fix and format

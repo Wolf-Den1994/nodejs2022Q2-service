@@ -83,7 +83,7 @@ export class FavsService {
           data: { id: this.id },
         });
       } catch (error) {
-        console.log('ERROR INITIAL FAVS:', error);
+        console.error('ERROR INITIAL FAVS:', error);
       }
     }
   }

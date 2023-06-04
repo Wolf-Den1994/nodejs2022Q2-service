@@ -11,7 +11,7 @@ services:
     ports:
       - 4000:4000
     environment:
-      DATABASE_URL: postgresql://postgres:12345@postgres:5432/postgresdb?schema=public&connect_timeout=300
+      DATABASE_URL: postgresql://postgres:123@postgres:5432/nestjs?schema=public&connect_timeout=300
     depends_on:
       - postgres
     volumes:
