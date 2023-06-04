@@ -1,27 +1,90 @@
-import { Injectable } from '@nestjs/common';
-import { IFavSuccessful } from 'src/db/dto/db.dto';
-import db from '../db/InMemoryDB';
+import {
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
+import { fields, IFavSuccessful } from 'src/db/dto/db.dto';
 import { Fav } from './schemas/favs.schemas';
+import { PrismaService } from 'src/prisma/prisma.service';
+import {
+  dataAlbum,
+  dataArtist,
+  dataTrack,
+  favNotFound,
+  InfoForUser,
+  notFound,
+} from 'src/utils/constants';
 
 @Injectable()
 export class FavsService {
   data: string;
-  constructor() {
+  id: number;
+
+  constructor(private prisma: PrismaService) {
     this.data = 'favorites';
+    this.id = 0;
   }
 
   async getAll(): Promise<Fav> {
-    const data: Fav = await db.getAllFavorites(this.data);
-    return data;
+    await this.initFavs();
+
+    return await this.prisma.favorites.findUnique({
+      where: { id: this.id },
+      select: {
+        artists: { select: dataArtist },
+        albums: { select: dataAlbum },
+        tracks: { select: dataTrack },
+      },
+    });
   }
 
-  async create(id: string, type: string): Promise<IFavSuccessful> {
-    const data = await db.createFav(type, id);
-    return data;
+  async create(id: string, type: fields): Promise<IFavSuccessful> {
+    try {
+      await this.initFavs();
+
+      await this.prisma[type].update({
+        where: { id },
+        data: { favoritesId: this.id },
+      });
+
+      const data = {
+        statusCode: HttpStatus.CREATED,
+        message: InfoForUser.ADDED_SUCCESSFULY,
+      };
+
+      return data;
+    } catch (error) {
+      throw new UnprocessableEntityException(favNotFound(type));
+    }
   }
 
-  async remove(id: string, type: string): Promise<void> {
-    const data = await db.removeFav(type, id);
-    return data;
+  async remove(id: string, type: fields): Promise<void> {
+    try {
+      await this.initFavs();
+
+      await this.prisma[type].update({
+        where: { id },
+        data: { favoritesId: null },
+      });
+    } catch (err) {
+      throw new NotFoundException(notFound(this.data));
+    }
+  }
+
+  private async initFavs() {
+    try {
+      await this.prisma.favorites.findUniqueOrThrow({
+        where: { id: this.id },
+      });
+    } catch (error) {
+      try {
+        await this.prisma.favorites.create({
+          data: { id: this.id },
+        });
+      } catch (error) {
+        console.log('ERROR INITIAL FAVS:', error);
+      }
+    }
   }
 }

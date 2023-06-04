@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { IUserWithoutPass } from 'src/db/dto/db.dto';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -26,7 +27,9 @@ export class UserController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getById(@Param('id') id: string): Promise<IUserWithoutPass> {
+  getById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<IUserWithoutPass> {
     return this.userService.getById(id);
   }
 
@@ -38,7 +41,9 @@ export class UserController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<IUserWithoutPass> {
+  remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<IUserWithoutPass> {
     return this.userService.remove(id);
   }
 
@@ -46,7 +51,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   update(
     @Body() updateUserDto: UpdateUserDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<IUserWithoutPass> {
     return this.userService.update(id, updateUserDto);
   }

@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
@@ -26,7 +27,9 @@ export class TrackController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  getById(@Param('id') id: string): Promise<Track> {
+  getById(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Track> {
     return this.trackService.getById(id);
   }
 
@@ -38,7 +41,9 @@ export class TrackController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string): Promise<Track> {
+  remove(
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
+  ): Promise<Track> {
     return this.trackService.remove(id);
   }
 
@@ -46,7 +51,7 @@ export class TrackController {
   @HttpCode(HttpStatus.OK)
   update(
     @Body() updateTrackDto: UpdateTrackDto,
-    @Param('id') id: string,
+    @Param('id', new ParseUUIDPipe({ version: '4' })) id: string,
   ): Promise<Track> {
     return this.trackService.update(id, updateTrackDto);
   }

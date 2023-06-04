@@ -32,9 +32,9 @@ export interface ITrack {
 }
 
 export interface IFavorites {
-  artists: IArtist[]; // favorite artists ids
-  albums: IAlbum[]; // favorite albums ids
-  tracks: ITrack[]; // favorite tracks ids
+  artists: string[]; // favorite artists ids
+  albums: string[]; // favorite albums ids
+  tracks: string[]; // favorite tracks ids
 }
 
 export type IDB = IUser | IArtist | IAlbum | ITrack;
@@ -43,3 +43,5 @@ export interface IFavSuccessful {
   statusCode: number;
   message: string;
 }
+
+export type fields = 'artists' | 'albums' | 'tracks';
